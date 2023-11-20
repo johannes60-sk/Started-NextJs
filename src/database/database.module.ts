@@ -10,7 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   imports: [
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],  // j'importe ici le schema de validation des variable env
-      inject: [ConfigService],
+      inject: [ConfigService],  // configService contient nos variables d'env
       useFactory: (configService: ConfigService) => ({  //useFactory permet d’accéder aux variables d’environnement
         type: 'postgres',
         host: configService.get('POSTGRES_HOST'),
