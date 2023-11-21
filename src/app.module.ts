@@ -10,6 +10,7 @@ import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
+    PostsModule,
     ConfigModule.forRoot({    // Tout ceci permet de configurer un schema de validation pour les variables d'env
       validationSchema: Joi.object({
         POSTGRES_HOST: Joi.string().required(),
@@ -24,8 +25,7 @@ import { APP_FILTER } from '@nestjs/core';
     }),
     DatabaseModule,
     AuthenticationModule,
-    PostsModule,
-    UsersModule
+    UsersModule,
   ],
   controllers: [],
   providers: [

@@ -7,7 +7,7 @@ import UsersController from "./users.controller";
 @Module({
     imports:[TypeOrmModule.forFeature([User])],
     providers: [UsersService], 
-    controllers: [UsersController],
+    // controllers: [UsersController],
     exports: [UsersService], // ici j'export le  provider pour le rendre disponible en dehors du module et etre utilise
 })
 
