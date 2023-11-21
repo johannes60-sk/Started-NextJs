@@ -1,4 +1,4 @@
-import { Repository } from "typeorm";
+import { Repository } from 'typeorm';
 import User from "./user.entity";
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,7 +8,7 @@ export default class UsersService{
     
     constructor(
         @InjectRepository(User)  
-        private usersRepository: Repository<User>
+        private readonly  usersRepository: Repository<User>
         ){}
 
     async getByEmail(email: string){
@@ -27,8 +27,8 @@ export default class UsersService{
         throw new HttpException('User with this id does not exist', HttpStatus.NOT_FOUND);
     }
 
-    async create(userData: createUser){
-        const newUser = await this.usersRepository.create(userData);
+    async create(userData: createUser): Promise<User> {
+        const newUser = this.usersRepository.create(userData);
         await this.usersRepository.save(newUser);
         return newUser;
     }

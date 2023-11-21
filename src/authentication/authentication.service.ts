@@ -1,6 +1,6 @@
-import UsersService from "src/users/users.service";
+import UsersService from "./../users/users.service";
 import * as bcrypt from 'bcrypt';
-import { HttpException, HttpStatus } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import RegisterDto from "./dto/register.dto";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
@@ -9,12 +9,24 @@ import TokenPayLoad from "./tokenPayload.interface";
 export default class AuthenticationService{
 
     constructor(
+        // private readonly usersService:UsersService,
         private readonly usersService: UsersService,
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService
         ){}
 
-   public async register(registrationData: RegisterDto){}
+        public async register(registrationData: RegisterDto) {
+            try {
+                console.log(registrationData);
+    
+                const createdUser = await this.usersService.create(registrationData);
+                createdUser.password = undefined;
+                return createdUser;
+            } catch (error) {
+                console.error('Erreur lors de l\'appel de create dans AuthService :', error);
+                throw new HttpException('Erreur lors de la création de l\'utilisateur', HttpStatus.BAD_REQUEST);
+            }
+        }
    
     public async getAuthenticatedUser(email: string, plainTextPassowrd: string){
         try{

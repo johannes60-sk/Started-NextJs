@@ -3,6 +3,7 @@ import PostsService from './posts.service'
 import CreatePostDto from './dto/createPost.dto';
 import UpdatePostDto from './dto/updatePost.dto';
 import JwtAuthenticationGuard from 'src/authentication/jwt-authentication.guard';
+import FindOneParams from 'src/utils/findOneParams';
 
 @Controller('posts')
 export default class PostsController{
@@ -14,7 +15,7 @@ export default class PostsController{
     }
 
     @Get(':id')
-    getPostById(@Param('id')id: string){
+    getPostById(@Param() {id}: FindOneParams){  //au lieu de faire ceci: [@Param('id')id: string] on a utiliser la classe-validator pour verifier le parametre
         return this.postsService.getPostById(Number(id));
     }
 

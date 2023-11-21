@@ -8,7 +8,8 @@ import JwtAuthenticationGuard from "./jwt-authentication.guard";
 
 @Controller('authentification')
 export default class AuthenticationController{
-    constructor(private readonly authenticationService: AuthenticationService){}
+    constructor(private readonly authenticationService: AuthenticationService){
+    }
 
     @Post('register')
     async register(@Body() registrationData: RegisterDto){
