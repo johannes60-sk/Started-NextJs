@@ -21,7 +21,7 @@ export default class PostsController{
     }
 
     @Post()
-    // @UseGuards(JwtAuthenticationGuard) // impose une auth avant d'acceder a la route
+    @UseGuards(JwtAuthenticationGuard) // impose une auth avant d'acceder a la route
     async createPost(@Body() post: CreatePostDto, @Req() req: RequestWithUser) {
       return this.postsService.createPost(post, req.user);
     }

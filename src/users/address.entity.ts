@@ -2,7 +2,7 @@ import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import User from './user.entity';
 
 @Entity()
-export default class Adress{
+export default class Address{
     @PrimaryGeneratedColumn() 
     public id: number;
 
@@ -15,6 +15,6 @@ export default class Adress{
     @Column()
     public country: string;
 
-    @OneToOne(() => User, (user: User) => user.adress) // ici on creer une relation inverse ce qui permet de rendre bidirectionnelle la relation entre adresse et user
+    @OneToOne(() => User, (user: User) => user.address) // ici on creer une relation inverse ce qui permet de rendre bidirectionnelle la relation entre adresse et user
     public user: User;
 }

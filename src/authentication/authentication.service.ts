@@ -1,34 +1,46 @@
-import UsersService from "./../users/users.service";
+import UsersService from "../users/users.service";
 import * as bcrypt from 'bcrypt';
 import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import RegisterDto from "./dto/register.dto";
 import { JwtService } from "@nestjs/jwt";
 import { ConfigService } from "@nestjs/config";
 import TokenPayLoad from "./tokenPayload.interface";
+import { PostgresErrorCode } from "../database/postgresErrorCodes.enum";
 
+@Injectable()
 export default class AuthenticationService{
 
     constructor(
-        // private readonly usersService:UsersService,
-        private readonly usersService: UsersService,
+        private readonly usersService:UsersService,
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService
         ){}
 
         public async register(registrationData: RegisterDto) {
+            const hashedPassword = await bcrypt.hash(registrationData.password, 10);
             try {
-                console.log(registrationData);
+                // console.log(registrationData)
     
-                const createdUser = await this.usersService.create(registrationData);
-                createdUser.password = undefined;
+                const createdUser = await this.usersService.createNewUser({
+                    ...registrationData,
+                    password: hashedPassword
+                });
+
+                console.log("registrationData")
+
+                // createdUser.password = undefined;
                 return createdUser;
             } catch (error) {
-                console.error('Erreur lors de l\'appel de create dans AuthService :', error);
-                throw new HttpException('Erreur lors de la création de l\'utilisateur', HttpStatus.BAD_REQUEST);
+
+                if(error?.code === PostgresErrorCode.UniqueViolation){
+                    throw new HttpException('User with that email already exists', HttpStatus.BAD_REQUEST);
+                }
+                console.error(error);
+                throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
    
-    public async getAuthenticatedUser(email: string, plainTextPassowrd: string){
+    public async getAuthenticatedUser(email: string, plainTextPassowrd: string){  //verifie si l'utilisateur existe pour le connecter
         try{
             const user = await this.usersService.getByEmail(email);
             await this.verifyPassword(plainTextPassowrd, user.password)
@@ -54,8 +66,8 @@ export default class AuthenticationService{
         return `Authentification=${token}; HttOnly; Path=/; Max-Age=${this.configService.get('JWT_EXPIRATION_TIME')}`; 
     }
 
-    public getCookieForLogout(){
-        return `Authentication=; HttpOnly; Path=/; Max-Age=0`;
+    public getCookieForLogOut(){
+        return 'Authentication=; HttpOnly; Path=/; Max-Age=0';
         
     }
 }

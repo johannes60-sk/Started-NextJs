@@ -1,9 +1,9 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Exclude } from 'class-transformer';
-import Adress from "./address.entity";
-import Post from "src/posts/post.entity";
+import Address from "./address.entity";
+import Post from "../posts/post.entity";
 @Entity()
-class User{
+class Users{
     @PrimaryGeneratedColumn()
     public id?: number;
 
@@ -17,12 +17,12 @@ class User{
     @Exclude()  // ici on indique de ne pas renvoyer dans la reponse le password a a l'utilisateur
     public password: string;
 
-    @OneToOne(() => Adress,{ // son argument est une fonction qui renvoie la classe de l’entité avec laquelle nous voulons établir une relation.
-    eager: true,
+    @OneToOne(() => Address,{ // son argument est une fonction qui renvoie la classe de l’entité avec laquelle nous voulons établir une relation.
+    eager: true,   //ici on precise de renvoyer egalements les adresses quand on recupere les users
     cascade: true // grace a cette option on peut enregistrer une adresse tout en enregistrant un user dans la bd
-    })  //ici on precise de renvoyer egalements les adresses quand on recupere les users
+    })  
     @JoinColumn()  // permet d'indiquer que l'entite user est proprietaire de la relation .Du coup dans la table user on aura adressId
-    public adress: Adress;
+    public address: Address;
 
     @OneToMany(() => Post, (post: Post) => post.author)
     public posts: Post[];
@@ -32,4 +32,4 @@ class User{
      spécifie comment la relation est configurée.*/
 }
 
-export default User;
+export default Users;

@@ -1,9 +1,10 @@
-import { Module } from "@nestjs/common";
+import { Global, Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import User from "./user.entity";
 import UsersService from "./users.service";
-import UsersController from "./users.controller";
+// import UsersController from "./users.controller";
 
+@Global()
 @Module({
     imports:[TypeOrmModule.forFeature([User])],
     providers: [UsersService], 
@@ -11,4 +12,4 @@ import UsersController from "./users.controller";
     exports: [UsersService], // ici j'export le  provider pour le rendre disponible en dehors du module et etre utilise
 })
 
-export default class UsersModule{}
+export class UsersModule{}

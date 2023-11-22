@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { PostsModule } from './posts/posts.module';
-import UsersModule from "./users/users.module"
+import {UsersModule} from "./users/users.module"
 import { ConfigModule } from '@nestjs/config';  // Permet de configurer des variables d’environnement
 import * as Joi from '@hapi/joi'; // permet de valider nos variables d’environnement en definisant un schema de validation
 import { DatabaseModule } from './database/database.module';
