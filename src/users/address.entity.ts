@@ -16,5 +16,5 @@ export default class Address{
     public country: string;
 
     @OneToOne(() => User, (user: User) => user.address) // ici on creer une relation inverse ce qui permet de rendre bidirectionnelle la relation entre adresse et user
-    public user: User;
+    public user?: User;
 }

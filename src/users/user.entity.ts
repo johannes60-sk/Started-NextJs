@@ -25,7 +25,7 @@ class Users{
     public address: Address;
 
     @OneToMany(() => Post, (post: Post) => post.author)
-    public posts: Post[];
+    public posts?: Post[];
 
     /*  Le premier argument de @OneToMany est une fonction qui renvoie le type de l'entité cible (Post dans ce cas),
      et le deuxième argument est une fonction qui

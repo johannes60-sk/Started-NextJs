@@ -10,6 +10,7 @@ import { mockedConfigService } from '../../utils/mocks/config.service';
 import {mockedJwtService} from '../../utils/mocks/jwt.service';
 describe('The AuthenticationService', () => {
   let authenticationService: AuthenticationService;
+  let usersService: UsersService;
   beforeEach(async () => {  // mis en place de l'env de test ou les dépendances du service à tester sont remplacées par des versions simulées
     const module = await Test.createTestingModule({
       providers: [
@@ -30,7 +31,8 @@ describe('The AuthenticationService', () => {
       ],
     }).compile();
     authenticationService = await module.get<AuthenticationService>(AuthenticationService); // recup du servive a tester
-  })
+    
+})
   describe('when creating a cookie', () => {
     it('should return a string', () => {   // le test
       const userId = 1;

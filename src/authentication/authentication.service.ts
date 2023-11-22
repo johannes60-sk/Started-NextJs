@@ -28,7 +28,7 @@ export default class AuthenticationService{
 
                 console.log("registrationData")
 
-                // createdUser.password = undefined;
+                createdUser.password = undefined;
                 return createdUser;
             } catch (error) {
 
