@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn
 import { Exclude } from 'class-transformer';
 import Address from "./address.entity";
 import Post from "../posts/post.entity";
+import PublicFile from "src/files/publicFile.entity";
 @Entity()
 class Users{
     @PrimaryGeneratedColumn()
@@ -15,7 +16,7 @@ class Users{
 
     @Column()
     @Exclude()  // ici on indique de ne pas renvoyer dans la reponse le password a a l'utilisateur
-    public password: string;
+    public password?: string;
 
     @OneToOne(() => Address,{ // son argument est une fonction qui renvoie la classe de l’entité avec laquelle nous voulons établir une relation.
     eager: true,   //ici on precise de renvoyer egalements les adresses quand on recupere les users
@@ -27,9 +28,21 @@ class Users{
     @OneToMany(() => Post, (post: Post) => post.author)
     public posts?: Post[];
 
+    @JoinColumn()
+    @OneToOne(
+        () => PublicFile,
+        {
+            eager: true,
+            nullable: true
+        } 
+    )
+    public avatar?: PublicFile;
+    
     /*  Le premier argument de @OneToMany est une fonction qui renvoie le type de l'entité cible (Post dans ce cas),
      et le deuxième argument est une fonction qui
      spécifie comment la relation est configurée.*/
+
+
 }
 
 export default Users;

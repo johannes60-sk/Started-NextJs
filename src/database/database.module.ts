@@ -2,9 +2,10 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
  import Post from '../posts/post.entity'
-import Users from 'src/users/user.entity';
-import Adress from 'src/users/address.entity';
-import Category from 'src/categories/category.entity';
+import Users from '../users/user.entity';
+import Adress from '../users/address.entity';
+import Category from '../categories/category.entity';
+import PublicFile from '../files/publicFile.entity';
 
 //Dès que nous créons un fichier .env à la racine de notre application,
 // NestJS les injecte dans un ConfigSerivice
@@ -21,7 +22,7 @@ import Category from 'src/categories/category.entity';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [Post, Users, Adress, Category],  
+        entities: [Post, Users, Adress, Category, PublicFile],  
         //   __dirname + '/../**/*.entity.ts',
         synchronize: true,
       })
