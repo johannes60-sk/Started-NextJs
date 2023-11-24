@@ -3,6 +3,7 @@ import { Exclude } from 'class-transformer';
 import Address from "./address.entity";
 import Post from "../posts/post.entity";
 import PublicFile from "src/files/publicFile.entity";
+import PrivateFile from "src/privateFile/privateFile.entity";
 @Entity()
 class Users{
     @PrimaryGeneratedColumn()
@@ -37,6 +38,10 @@ class Users{
         } 
     )
     public avatar?: PublicFile;
+
+    @OneToMany(() => PrivateFile, (file: PrivateFile) => file.owner)
+    public files?: PrivateFile[];
+
     
     /*  Le premier argument de @OneToMany est une fonction qui renvoie le type de l'entité cible (Post dans ce cas),
      et le deuxième argument est une fonction qui

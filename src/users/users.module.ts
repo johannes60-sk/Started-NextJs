@@ -4,12 +4,14 @@ import User from "./user.entity";
 import UsersService from "./users.service";
 import UsersController from "./users.controller";
 import { FilesModule } from "../files/files.module";
+import PrivateFilesModule from "src/privateFile/privateFiles.module.";
 
 
 @Module({
     imports:[
         TypeOrmModule.forFeature([User]),
         FilesModule,
+        PrivateFilesModule,
     ],
     providers: [UsersService], 
     controllers: [UsersController],

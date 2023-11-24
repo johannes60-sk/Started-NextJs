@@ -6,6 +6,7 @@ import Users from '../users/user.entity';
 import Adress from '../users/address.entity';
 import Category from '../categories/category.entity';
 import PublicFile from '../files/publicFile.entity';
+import PrivateFile from 'src/privateFile/privateFile.entity';
 
 //Dès que nous créons un fichier .env à la racine de notre application,
 // NestJS les injecte dans un ConfigSerivice
@@ -22,7 +23,7 @@ import PublicFile from '../files/publicFile.entity';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [Post, Users, Adress, Category, PublicFile],  
+        entities: [Post, Users, Adress, Category, PublicFile, PrivateFile],  
         //   __dirname + '/../**/*.entity.ts',
         synchronize: true,
       })

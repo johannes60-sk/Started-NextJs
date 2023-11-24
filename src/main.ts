@@ -14,6 +14,7 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());  //permet de valider les donnees en entrer
   app.useGlobalInterceptors(new ExcludeNullInterceptor());
   app.use(cookieParser());   // permet de lire les cookies 
+  // Activation des en-têtes CORS
   
   const configService = app.get(ConfigService);
   config.update({

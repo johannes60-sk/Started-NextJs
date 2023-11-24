@@ -8,6 +8,7 @@ import AuthenticationModule from './authentication/authentication.module';
 import ExceptionsLoggerFilter from './utils/exceptionsLogger.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { FilesModule } from './files/files.module';
+import PrivateFilesModule from './privateFile/privateFiles.module.';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { FilesModule } from './files/files.module';
         AWS_ACCESS_KEY_ID: Joi.string().required(),
         AWS_SECRET_ACCESS_KEY: Joi.string().required(),
         AWS_PUBLIC_BUCKET_NAME: Joi.string().required(),
+        AWS_PRIVATE_BUCKET_NAME: Joi.string().required(),
         PORT: Joi.number(),
       })
     }),
@@ -32,6 +34,7 @@ import { FilesModule } from './files/files.module';
     AuthenticationModule,
     UsersModule,
     FilesModule,
+    PrivateFilesModule,
   ],
   controllers: [],
   providers: [

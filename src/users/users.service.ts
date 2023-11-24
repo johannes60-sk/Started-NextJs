@@ -1,9 +1,10 @@
 import { Repository } from 'typeorm';
 import Users from "./user.entity";
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import CreateUserDto from "./dto/createUser.dto";
 import FilesService from 'src/files/files.service';
+import { PrivateFilesService } from 'src/privateFile/privateFiles.service';
 
 @Injectable()
 export default class UsersService{
@@ -11,7 +12,8 @@ export default class UsersService{
     constructor(
         @InjectRepository(Users)  
         private usersRepository: Repository<Users>,
-        private readonly filesService: FilesService
+        private readonly filesService: FilesService,
+        private readonly privateFilesServices: PrivateFilesService
         ){}
 
     async getByEmail(email: string){
@@ -57,5 +59,37 @@ export default class UsersService{
             });
             await this.filesService.deletePublicFile(fileId)
             }
+        }
+
+        async addPrivateFile(userId: number, imageBuffer: Buffer, filename: string){
+            return this.privateFilesServices.uploadPrivateFile(imageBuffer, userId, filename);
+        }
+
+        async getPrivateFile(userId: number, fileId: number){
+            const file = await this.privateFilesServices.getPrivateFile(fileId);
+            if(file.info.owner.id === userId){
+                return file;
+            }
+            throw new UnauthorizedException();
+
+        }
+
+        async getAllPrivateFiles(userId: number){
+           const userWithFiles = await this.usersRepository.findOne({
+            where: {id: userId},
+            relations: ['files']
+           });
+           if(userWithFiles){
+            return Promise.all(
+                userWithFiles.files.map(async (file) => {
+                    const url = await this.privateFilesServices.generatePresignedurl(file.key);
+                    return{  // renvoie toute les propertes de file et y ajoute egalement la propriete url
+                        ...file,
+                        url
+                    }
+                })
+            )
+           }
+           throw new NotFoundException('User with id does not exist');
         }
     }
