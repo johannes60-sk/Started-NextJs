@@ -6,6 +6,7 @@ import { Repository, In } from 'typeorm';
 import createPostDto from './dto/createPost.dto';
 import User from 'src/users/user.entity';
 import PostNotFoundException from './exception/postNotFund.exception';
+import PostsSearchService from './postsSearch.services';
  
 @Injectable()
 export default class PostsService {
@@ -13,7 +14,8 @@ export default class PostsService {
 
 constructor(
   @InjectRepository(Post)
-  private postsRepository: Repository<Post>
+  private postsRepository: Repository<Post>,
+  private postsSearchService: PostsSearchService
 ) {}
 
 // Retourne tous les post
@@ -35,12 +37,24 @@ async getPostById(id: number){
 // Creer un nouveau post et le retourne
 async createPost(post: createPostDto, user: User){
   const newPost = this.postsRepository.create({
-    ...post
-    // author: user
+    ...post,
+    author: user
   });
   await this.postsRepository.save(newPost);
+  this.postsSearchService.indexPost(newPost);
   return newPost;
 }
+
+async searchForPosts(text: string){
+  const results = await this.postsSearchService.search(text);
+  const ids = results.map(result => result.hits);
+  if(!ids.length){
+    return [];
+  }
+  return this.postsRepository.find({where: {id: In(ids)}})
+}
+
+
 
 // met a jour un post et le retourne 
 async updatePost(id: number, post: UpdatePostDto){

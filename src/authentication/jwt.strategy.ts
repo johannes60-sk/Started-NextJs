@@ -16,10 +16,10 @@ export default class JwtStrategy extends PassportStrategy(Strategy){
             jwtFromRequest: ExtractJwt.fromExtractors([(request: Request) => {
                 return request?.cookies.Authentification;
             }]),
-            secretOrKey: configService.get('JWT_SECRET')
+            secretOrKey: configService.get('JWT_ACCESS_TOKEN_SECRET')
         });
     }
-
+    
     async validate(playload: TokenPayLoad){
         return this.userService.getById(playload.userId);
     }

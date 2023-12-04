@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import CreateUserDto from "./dto/createUser.dto";
 import FilesService from 'src/files/files.service';
 import { PrivateFilesService } from 'src/privateFile/privateFiles.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export default class UsersService{
@@ -91,5 +92,32 @@ export default class UsersService{
             )
            }
            throw new NotFoundException('User with id does not exist');
+        }
+
+        async setCurrentRefreshToken(refreshToken: string, userId: number){
+            const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10);
+            await this.usersRepository.update(userId, {
+                currentHashedRefreshToken
+            }); 
+        }
+
+        async getUserIfRefreshTokenMatches(refreshToken: string, userId: number){
+            const user = await this.getById(userId);
+            const isRefreshTokenMatching = await bcrypt.compare(
+                refreshToken,
+                user.currentHashedRefreshToken
+            );
+
+            if(isRefreshTokenMatching){
+                return user;
+            }
+
+            return "tu n'est pas authorise a rafraichir un new token";
+        }
+
+        async removeRefreshToken(userId: number){
+            return this.usersRepository.update(userId, {
+                currentHashedRefreshToken: null
+            });
         }
     }

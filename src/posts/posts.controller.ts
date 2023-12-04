@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import PostsService from './posts.service' 
 import CreatePostDto from './dto/createPost.dto';
 import UpdatePostDto from './dto/updatePost.dto';
@@ -11,7 +11,10 @@ export default class PostsController{
     constructor(private readonly postsService:PostsService){} // readonly permet d'initialiser une seule fois la variable , sa valeur ne peut être modifiée après l'initialisation
 
     @Get()
-    getAllPost(){
+    getPosts(@Query('search') search: string){
+      if(search){
+        return this.postsService.searchForPosts(search);
+      }
         return this.postsService.getAllPost();
     }
 
