@@ -1,6 +1,6 @@
-import { Repository } from 'typeorm';
+import { Connection, Repository } from 'typeorm';
 import Users from "./user.entity";
-import { HttpException, HttpStatus, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import CreateUserDto from "./dto/createUser.dto";
 import FilesService from 'src/files/files.service';
@@ -14,7 +14,8 @@ export default class UsersService{
         @InjectRepository(Users)  
         private usersRepository: Repository<Users>,
         private readonly filesService: FilesService,
-        private readonly privateFilesServices: PrivateFilesService
+        private readonly privateFilesServices: PrivateFilesService,
+        private connection: Connection
         ){}
 
     async getByEmail(email: string){
@@ -51,14 +52,27 @@ export default class UsersService{
 
     /*  lorsqu’un utilisateur télécharge un avatar alors qu’il en a déjà un, nous supprimons l’ancien*/
     async deleteAvatar(userId: number){
+        const queryRunner = this.connection.createQueryRunner(); //les opérations sont regroupées dans une transaction, et si quelque chose échoue, toutes les opérations peuvent être annulées.
         const user = await this.getById(userId);
         const fileId = user.avatar?.id;
         if(fileId){
-            await this.usersRepository.update(userId, {
-                ...user,
-                avatar: null
-            });
-            await this.filesService.deletePublicFile(fileId)
+            await queryRunner.connect();
+            await queryRunner.startTransaction();
+
+            try{
+                await queryRunner.manager.update(Users, userId, {
+                    ...user,
+                    avatar: null
+                });
+                await this.filesService.deletePublicFileWithQueryRunner(fileId, queryRunner);
+                await queryRunner.commitTransaction(); // validation et confirmation de la transaction
+            }catch(error){
+                await queryRunner.rollbackTransaction(); // si y a une erreur a n'importe des etapes la transaction entiere est annule
+                throw new InternalServerErrorException();
+            }finally{
+                await queryRunner.release(); // on libere le QuerryRunner  pour le rendre disponible pour d'autres opérations.
+            }
+
             }
         }
 
