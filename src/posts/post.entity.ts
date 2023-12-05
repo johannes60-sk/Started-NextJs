@@ -10,8 +10,11 @@ class Post {
     @Column()
     public title: string;
 
-    @Column()
+    @Column({nullable: true})
     public content: string;
+
+    @Column('text', {array: true})   // def d'un tableau de text
+    public paragraphs: string[];
 
     @Column({ nullable: true})
     public category?: string;

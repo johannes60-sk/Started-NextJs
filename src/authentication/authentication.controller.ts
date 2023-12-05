@@ -51,7 +51,7 @@ export default class AuthenticationController{
         return user;
     }
 
-    // @UseGuards(JwtRefreshGuard)
+    @UseGuards(JwtRefreshGuard)
     @Get('refresh')
     refresh(@Req() request: RequestWithUser){
         const accessTokenCookie = this.authenticationService.getCookieWithJwtAccessToken(request.user.id);
