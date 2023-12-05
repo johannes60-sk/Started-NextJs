@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import UpdatePostDto from './dto/updatePost.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import Post from './post.entity';
-import { Repository, In } from 'typeorm';
+import { Repository, In, FindManyOptions, MoreThan } from 'typeorm';
 import createPostDto from './dto/createPost.dto';
 import User from 'src/users/user.entity';
 import PostNotFoundException from './exception/postNotFund.exception';
@@ -19,9 +19,22 @@ constructor(
 ) {}
 
 // Retourne tous les post
-getAllPost(){
-  return this.postsRepository.find();
-  // return this.postsRepository.find({relations: ['author']});
+async getAllPost(offset?: number, limit?: number, startId?: number){
+  const where: FindManyOptions<Post>['where'] = {}; // pour specifier des options lors de la recherche. FindManyOptions prend l'entite et la propriete pour definir les conditions de la recherche(['where'])
+  let separateCount = 0;
+  if(startId){
+    where.id = MoreThan(startId)  // condition de recherche spécifie de récupérer les entités Post avec un ID supérieur à startId
+    separateCount = await this.postsRepository.count();
+  }
+  const [items, count] = await this.postsRepository.findAndCount({
+    relations: ['author'], // pour chaque post les donnee de l'auteur sera aussi recuperer
+    order: {
+      id: 'ASC'
+    },
+    skip: offset,  // specifier le nbr d'enregristrement a ignorer avant de commencer par recup
+    take: limit    // nbr maxi a recup
+  });
+  return {items,count: startId ? separateCount : count};
 }
 
 //prend l'id d'un post et le retourne
@@ -45,8 +58,8 @@ async createPost(post: createPostDto, user: User){
   return newPost;
 }
 
-async searchForPosts(text: string){
-  const results = await this.postsSearchService.search(text);
+async searchForPosts(text: string, offset?: number, limit?: number ){
+  const {results, count} = await this.postsSearchService.search(text);
   const ids = results.map(result => result.hits);
   if(!ids.length){
     return [];
