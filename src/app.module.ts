@@ -9,6 +9,7 @@ import ExceptionsLoggerFilter from './utils/exceptionsLogger.filter';
 import { APP_FILTER } from '@nestjs/core';
 import { FilesModule } from './files/files.module';
 import PrivateFilesModule from './privateFile/privateFiles.module.';
+import SubscribersModule from './subscriptions/SubscribersModule';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import PrivateFilesModule from './privateFile/privateFiles.module.';
     UsersModule,
     FilesModule,
     PrivateFilesModule,
+    SubscribersModule,
   ],
   controllers: [],
   providers: [
