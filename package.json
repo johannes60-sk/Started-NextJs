@@ -37,6 +37,8 @@
     "@types/passport-jwt": "^3.0.13",
     "@types/passport-local": "^1.0.38",
     "@types/uuid": "^9.0.7",
+    "amqp-connection-manager": "^4.1.14",
+    "amqplib": "^0.10.3",
     "aws-sdk": "^2.1501.0",
     "bcrypt": "^5.1.1",
     "class-transformer": "^0.5.1",
